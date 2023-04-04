@@ -1,0 +1,338 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+class Korean extends StatefulWidget {
+   Korean({Key? key}) : super(key: key);
+
+   @override
+  State<Korean> createState() => _Screen2State();
+}
+
+class _Screen2State extends State<Korean> with TickerProviderStateMixin {
+  RxInt problemNum =0.obs;
+  RxInt selectedNum = 0.obs; //사용자가 선택한 선지가 어떤 선지인지 프로그램이 알수 있게하기위해서 만든 변수
+  List selectedNumList = [];
+
+  @override
+  Widget build(BuildContext context) {
+    TabController tabController = TabController(length: 7,vsync: this);
+
+    return Scaffold(
+        appBar: AppBar(
+          title: Text('한국어 (korean)'),
+        ),
+        body: Column(
+          children: [
+            const SizedBox(height: 30,),
+            const Text("응시종별 선택",style: TextStyle(color: Colors.black,fontSize: 30,fontStyle: FontStyle.normal),),
+            const SizedBox(height: 30,),
+            Card(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              elevation: 5,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Builder(
+                  builder: (context) {
+                    return TabBar(
+                      onTap: (index){
+                        selectedNum.value =0;
+                        selectedNumList.clear();
+                        // Get.defaultDialog(title: 'caution',content:Text('123') );
+                        },
+
+
+                      indicator: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.orange
+                      ),
+                      controller: tabController,
+                      isScrollable: true,
+                      labelPadding: const EdgeInsets.symmetric(horizontal: 35),
+                      tabs: [
+                        Tab(child: Text("1종보통",style: TextStyle(color: Colors.black)),),
+                        Tab(child: Text("2종보통",style: TextStyle(color: Colors.black)),),
+                        Tab(child: Text("1종대형(특수)",style: TextStyle(color: Colors.black)),),
+                        Tab(child: Text("2종소형(원동기)",style: TextStyle(color: Colors.black)),),
+                        Tab(child: Text("수 어",style: TextStyle(color: Colors.black)),),
+                        Tab(child: Text("문맹자",style: TextStyle(color: Colors.black)),),
+                      ],
+                    );
+                  }
+                ),
+              ),
+            ),
+              //Obx(()=> Text(problemNum.value.toString())),
+            Expanded(
+              child: SizedBox(
+                child: TabBarView(
+                  controller: tabController,
+                  children: [
+                    Obx(()=> Card(
+                      margin: EdgeInsets.symmetric(horizontal:30,vertical: 10),
+                      child: ListTile(
+                        //leading: Icon(Icons.call_received,color: Colors.green,),
+                        title: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(height: 25,width: 35,child: Container(color: Colors.blueAccent,child: Center(child: Text('${problemNum.value+1} 번문제',style: TextStyle(fontSize: 15,color: Colors.white),),),),),
+                                  SizedBox(width: 10,),
+                                  Expanded(child: Text(Get.arguments[0][problemNum.value]['question'].toString(),style: TextStyle(fontSize: 15,color: Colors.black,fontWeight: FontWeight.bold),)),
+                                ],
+                              ),
+                              SizedBox(height: 20,),
+
+                              Get.arguments[0][problemNum.value]['image'] == null ? Container(): Image.asset('image/sample/${Get.arguments[0][problemNum.value]['id']}.png'),
+                              SizedBox(height: 10),
+
+                              TextButton(onPressed:(){print('1번선택');  selectedNum.value=1;},
+                                  child: Text(Get.arguments[0][problemNum.value]['answer1'].toString(),style: selectedNum.value == 1? TextStyle(fontSize: 15,color: Colors.red): TextStyle(fontSize: 15,color: Colors.black)) ),
+                              SizedBox(height: 10),
+                              selectedNum.value==2?TextButton(onPressed:(){print('2번선택');  selectedNum.value=2;},
+                                  child: Text(Get.arguments[0][problemNum.value]['answer2'].toString())):TextButton(onPressed:(){print('2번선택');  selectedNum.value=2;},
+                                  child: Text(Get.arguments[0][problemNum.value]['answer2'].toString(),style: TextStyle(fontSize: 15,color: Colors.black,))),
+                              SizedBox(height: 10),
+                              selectedNum.value==3?TextButton(onPressed:(){print('3번선택');  selectedNum.value=3;},
+                                  child: Text(Get.arguments[0][problemNum.value]['answer3'].toString())):TextButton(onPressed:(){print('3번선택');  selectedNum.value=3;},
+                                  child: Text(Get.arguments[0][problemNum.value]['answer3'].toString(),style: TextStyle(fontSize: 15,color: Colors.black,))),
+                              SizedBox(height: 10),
+                              selectedNum.value==4?TextButton(onPressed:(){print('4번선택');  selectedNum.value=4;},
+                                  child: Text(Get.arguments[0][problemNum.value]['answer4'].toString())):TextButton(onPressed:(){print('4번선택');  selectedNum.value=4;},
+                                  child: Text(Get.arguments[0][problemNum.value]['answer4'].toString(),style: TextStyle(fontSize: 15,color: Colors.black,))),
+
+                              Text(Get.arguments[0][problemNum.value]['answer'].toString())
+
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),),
+
+
+                    Obx(()=> GestureDetector( //2종보통
+                      child: Card(
+                        margin: EdgeInsets.symmetric(horizontal:30,vertical: 10),
+                        child: ListTile(
+                          //leading: Icon(Icons.call_received,color: Colors.green,),
+                          title: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              TextButton(onPressed:(){print('문제 ');},
+                                  child: Text(Get.arguments[1][problemNum.value]['question'].toString(),style: TextStyle(fontSize: 15,color: Colors.black,),)),
+                              SizedBox(height: 10),
+                              Get.arguments[1][problemNum.value]['image'] == null ? Container(): Image.asset('image/sample/${Get.arguments[1][problemNum.value]['id']}.png'),
+                              SizedBox(height: 10),
+                              selectedNum.value==1?TextButton(onPressed:(){print('1번선택');  selectedNum.value=1;},
+                                  child: Text(Get.arguments[1][problemNum.value]['answer1'].toString())):TextButton(onPressed:(){print('1번선택');  selectedNum.value=1;},
+                                  child: Text(Get.arguments[1][problemNum.value]['answer1'].toString(),style: TextStyle(fontSize: 15,color: Colors.black,))),
+                              SizedBox(height: 10),
+                              selectedNum.value==2?TextButton(onPressed:(){print('2번선택');  selectedNum.value=2;},
+                                  child: Text(Get.arguments[1][problemNum.value]['answer2'].toString())):TextButton(onPressed:(){print('2번선택');  selectedNum.value=2;},
+                                  child: Text(Get.arguments[1][problemNum.value]['answer2'].toString(),style: TextStyle(fontSize: 15,color: Colors.black,))),
+                              SizedBox(height: 10),
+                              selectedNum.value==3?TextButton(onPressed:(){print('3번선택');  selectedNum.value=3;},
+                                  child: Text(Get.arguments[1][problemNum.value]['answer3'].toString())):TextButton(onPressed:(){print('3번선택');  selectedNum.value=3;},
+                                  child: Text(Get.arguments[1][problemNum.value]['answer3'].toString(),style: TextStyle(fontSize: 15,color: Colors.black,))),
+                              SizedBox(height: 10),
+                              selectedNum.value==4?TextButton(onPressed:(){print('4번선택');  selectedNum.value=4;},
+                                  child: Text(Get.arguments[1][problemNum.value]['answer4'].toString())):TextButton(onPressed:(){print('4번선택');  selectedNum.value=4;},
+                                  child: Text(Get.arguments[1][problemNum.value]['answer4'].toString(),style: TextStyle(fontSize: 15,color: Colors.black,))),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),),
+
+
+                    Obx(()=> GestureDetector( //1종대형(특수)
+                      child: Card(
+                        margin: EdgeInsets.symmetric(horizontal:30,vertical: 10),
+                        child: ListTile(
+                          //leading: Icon(Icons.call_received,color: Colors.green,),
+                          title: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              TextButton(onPressed:(){print('문제');},
+                                  child: Text(Get.arguments[2][problemNum.value]['question'].toString(),style: TextStyle(fontSize: 15,color: Colors.black,),)),
+                              SizedBox(height: 10,),
+                              //Image.asset('image/sample/681.png',),
+                              Get.arguments[2][problemNum.value]['image'] == null ? Container(): Image.asset('image/sample/${Get.arguments[2][problemNum.value]['id']}.png'),
+                              SizedBox(height: 10),
+                              selectedNum.value==1?TextButton(onPressed:(){print('1번선택');  selectedNum.value=1;},
+                                  child: Text(Get.arguments[2][problemNum.value]['answer1'].toString())):TextButton(onPressed:(){print('1번선택');  selectedNum.value=1;},
+                                  child: Text(Get.arguments[2][problemNum.value]['answer1'].toString(),style: TextStyle(fontSize: 15,color: Colors.black,))),
+                              SizedBox(height: 10),
+                              selectedNum.value==2?TextButton(onPressed:(){print('2번선택');  selectedNum.value=2;},
+                                  child: Text(Get.arguments[2][problemNum.value]['answer2'].toString())):TextButton(onPressed:(){print('2번선택');  selectedNum.value=2;},
+                                  child: Text(Get.arguments[2][problemNum.value]['answer2'].toString(),style: TextStyle(fontSize: 15,color: Colors.black,))),
+                              SizedBox(height: 10),
+                              selectedNum.value==3?TextButton(onPressed:(){print('3번선택');  selectedNum.value=3;},
+                                  child: Text(Get.arguments[2][problemNum.value]['answer3'].toString())):TextButton(onPressed:(){print('3번선택');  selectedNum.value=3;},
+                                  child: Text(Get.arguments[2][problemNum.value]['answer3'].toString(),style: TextStyle(fontSize: 15,color: Colors.black,))),
+                              SizedBox(height: 10),
+                              selectedNum.value==4?TextButton(onPressed:(){print('4번선택');  selectedNum.value=4;},
+                                  child: Text(Get.arguments[2][problemNum.value]['answer4'].toString())):TextButton(onPressed:(){print('4번선택');  selectedNum.value=4;},
+                                  child: Text(Get.arguments[2][problemNum.value]['answer4'].toString(),style: TextStyle(fontSize: 15,color: Colors.black,))),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),),
+
+
+                    Obx(()=> Card(
+                      margin: EdgeInsets.symmetric(horizontal:30,vertical: 10),
+                      child: ListTile(
+                        //leading: Icon(Icons.call_received,color: Colors.green,),
+                        title: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            TextButton(onPressed:(){print('문제');},
+                                child: Text(Get.arguments[3][problemNum.value]['question'].toString(),style: TextStyle(fontSize: 15,color: Colors.black,),)),
+                            SizedBox(height: 10),
+                            //Image.asset('image/sample/681.png',),
+                            Get.arguments[3][problemNum.value]['image'] == null ? Container(): Image.asset('image/sample/${Get.arguments[3][problemNum.value]['id']}.png'),
+                            SizedBox(height: 10),
+                            selectedNum.value==1?TextButton(onPressed:(){print('1번선택');  selectedNum.value=1;},
+                                child: Text(Get.arguments[3][problemNum.value]['answer1'].toString())):TextButton(onPressed:(){print('1번선택');  selectedNum.value=1;},
+                                child: Text(Get.arguments[3][problemNum.value]['answer1'].toString(),style: TextStyle(fontSize: 15,color: Colors.black,))),
+                            SizedBox(height: 10),
+                            selectedNum.value==2?TextButton(onPressed:(){print('2번선택');  selectedNum.value=2;},
+                                child: Text(Get.arguments[3][problemNum.value]['answer2'].toString())):TextButton(onPressed:(){print('2번선택');  selectedNum.value=2;},
+                                child: Text(Get.arguments[3][problemNum.value]['answer2'].toString(),style: TextStyle(fontSize: 15,color: Colors.black,))),
+                            SizedBox(height: 10),
+                            selectedNum.value==3?TextButton(onPressed:(){print('3번선택');  selectedNum.value=3;},
+                                child: Text(Get.arguments[3][problemNum.value]['answer3'].toString())):TextButton(onPressed:(){print('3번선택');  selectedNum.value=3;},
+                                child: Text(Get.arguments[3][problemNum.value]['answer3'].toString(),style: TextStyle(fontSize: 15,color: Colors.black,))),
+                            SizedBox(height: 10),
+                            selectedNum.value==4?TextButton(onPressed:(){print('4번선택');  selectedNum.value=4;},
+                                child: Text(Get.arguments[3][problemNum.value]['answer4'].toString())):TextButton(onPressed:(){print('4번선택');  selectedNum.value=4;},
+                                child: Text(Get.arguments[3][problemNum.value]['answer4'].toString(),style: TextStyle(fontSize: 15,color: Colors.black,))),
+                          ],
+                        ),
+                      ),
+                    ),),
+
+
+                    Obx(()=> GestureDetector(  //수어
+                      child: Card(
+                        margin: EdgeInsets.symmetric(horizontal:30,vertical: 10),
+                        child: ListTile(
+                          //leading: Icon(Icons.call_received,color: Colors.green,),
+                          title: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              TextButton(onPressed:(){print('문제');},
+                                  child: Text(Get.arguments[4][problemNum.value]['question'].toString(),style: TextStyle(fontSize: 15,color: Colors.black,),)),
+                              SizedBox(height: 10),
+                              //Image.asset('image/sample/681.png',),
+                              Get.arguments[4][problemNum.value]['image'] == null ? Container(): Image.asset('image/sample/${Get.arguments[4][problemNum.value]['id']}.png'),
+                              SizedBox(height: 10),
+                              selectedNum.value==1?TextButton(onPressed:(){print('1번선택');  selectedNum.value=1;},
+                                  child: Text(Get.arguments[4][problemNum.value]['answer1'].toString())):TextButton(onPressed:(){print('1번선택');  selectedNum.value=1;},
+                                  child: Text(Get.arguments[4][problemNum.value]['answer1'].toString(),style: TextStyle(fontSize: 15,color: Colors.black,))),
+                              SizedBox(height: 10),
+                              selectedNum.value==2?TextButton(onPressed:(){print('2번선택');  selectedNum.value=2;},
+                                  child: Text(Get.arguments[4][problemNum.value]['answer2'].toString())):TextButton(onPressed:(){print('2번선택');  selectedNum.value=2;},
+                                  child: Text(Get.arguments[4][problemNum.value]['answer2'].toString(),style: TextStyle(fontSize: 15,color: Colors.black,))),
+                              SizedBox(height: 10),
+                              selectedNum.value==3?TextButton(onPressed:(){print('3번선택');  selectedNum.value=3;},
+                                  child: Text(Get.arguments[4][problemNum.value]['answer3'].toString())):TextButton(onPressed:(){print('3번선택');  selectedNum.value=3;},
+                                  child: Text(Get.arguments[4][problemNum.value]['answer3'].toString(),style: TextStyle(fontSize: 15,color: Colors.black,))),
+                              SizedBox(height: 10),
+                              selectedNum.value==4?TextButton(onPressed:(){print('4번선택');  selectedNum.value=4;},
+                                  child: Text(Get.arguments[4][problemNum.value]['answer4'].toString())):TextButton(onPressed:(){print('4번선택');  selectedNum.value=4;},
+                                  child: Text(Get.arguments[4][problemNum.value]['answer4'].toString(),style: TextStyle(fontSize: 15,color: Colors.black,))),
+
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),),
+
+
+                    Obx(()=> GestureDetector( //문맹자
+                      child: Card(
+                        margin: EdgeInsets.symmetric(horizontal:30,vertical: 10),
+                        child: ListTile(
+                          //leading: Icon(Icons.call_received,color: Colors.green,),
+                          title: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              TextButton(onPressed:(){print('문제');},
+                                  child: Text(Get.arguments[5][problemNum.value]['question'].toString(),style: TextStyle(fontSize: 15,color: Colors.black,),)),
+                              SizedBox(height: 10),
+                              //Image.asset('image/sample/681.png',),
+                              Get.arguments[5][problemNum.value]['image'] == null ? Container(): Image.asset('image/sample/${Get.arguments[5][problemNum.value]['id']}.png'),
+                              SizedBox(height: 10),
+                              selectedNum.value==1?TextButton(onPressed:(){print('1번선택');  selectedNum.value=1;},
+                                  child: Text(Get.arguments[5][problemNum.value]['answer1'].toString())):TextButton(onPressed:(){print('1번선택');  selectedNum.value=1;},
+                                  child: Text(Get.arguments[5][problemNum.value]['answer1'].toString(),style: TextStyle(fontSize: 15,color: Colors.black,))),
+                              SizedBox(height: 10),
+                              selectedNum.value==2?TextButton(onPressed:(){print('2번선택');  selectedNum.value=2;},
+                                  child: Text(Get.arguments[5][problemNum.value]['answer2'].toString())):TextButton(onPressed:(){print('2번선택');  selectedNum.value=2;},
+                                  child: Text(Get.arguments[5][problemNum.value]['answer2'].toString(),style: TextStyle(fontSize: 15,color: Colors.black,))),
+                              SizedBox(height: 10),
+                              selectedNum.value==3?TextButton(onPressed:(){print('3번선택');  selectedNum.value=3;},
+                                  child: Text(Get.arguments[5][problemNum.value]['answer3'].toString())):TextButton(onPressed:(){print('3번선택');  selectedNum.value=3;},
+                                  child: Text(Get.arguments[5][problemNum.value]['answer3'].toString(),style: TextStyle(fontSize: 15,color: Colors.black,))),
+                              SizedBox(height: 10),
+                              selectedNum.value==4?TextButton(onPressed:(){print('4번선택');  selectedNum.value=4;},
+                                  child: Text(Get.arguments[5][problemNum.value]['answer4'].toString())):TextButton(onPressed:(){print('4번선택');  selectedNum.value=4;},
+                                  child: Text(Get.arguments[5][problemNum.value]['answer4'].toString(),style: TextStyle(fontSize: 15,color: Colors.black,))),
+
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),),
+                  ],
+                ),
+              ),
+            ),
+            Container(
+              //width: MediaQuery.of(context).size.width * 0.8,
+              //height: 100,
+              margin: const EdgeInsets.symmetric(vertical: 30),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ElevatedButton(onPressed: (){problemNum.value == 0 ?print('이전페이지가 없습니다'):problemNum.value--; print(problemNum.toString());
+                    selectedNum.value = selectedNumList[problemNum.value];
+                    },
+                    child: Text('<< 이전'),style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueAccent, padding: const EdgeInsets.symmetric(horizontal: 40,vertical: 10),textStyle: const TextStyle(fontSize: 25,fontWeight: FontWeight.bold),
+                    ),),
+                  SizedBox(width: 90,),
+                  ElevatedButton(onPressed: (){problemNum.value == null ?print('마지막 문제입니다'):problemNum.value++; print(problemNum.toString());
+
+                    selectedNum.value == Get.arguments[0][problemNum.value]['answer'] ? print('정답입니다'):print('오답니입니다');
+                    selectedNumList.add(selectedNum.value);
+                    print(selectedNumList);
+                    selectedNum.value =0;
+                    },
+                    child: Text('다음 >>'),style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueAccent, padding: const EdgeInsets.symmetric(horizontal: 40,vertical: 10),textStyle: const TextStyle(fontSize: 25,fontWeight: FontWeight.bold),
+                    ),),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+  }
+}
