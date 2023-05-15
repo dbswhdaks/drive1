@@ -15,7 +15,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState(){
     super.initState();
-    Timer(Duration(seconds: 1),(){
+    Timer(Duration(seconds: 5),(){
       Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context)
       => Bottom()));
     });
@@ -30,10 +30,13 @@ class _SplashScreenState extends State<SplashScreen> {
           child: Image(
             width: Get.width,
             height: Get.height,
-            image: AssetImage('image/logo.png',),
+            image: AssetImage('image/logo.png'),
           ),
         ),
       ),
+      //floatingActionButton: Image(
+      //image: AssetImage('image/loading.gif'),),
+      //floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
